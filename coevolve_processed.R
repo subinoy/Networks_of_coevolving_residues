@@ -8,4 +8,4 @@ library(tidyr)
 
 fen1_pcna <- read_csv("FEN1_INTER_COEV.csv")
 fen1_pcna
-fen1_splitted <- fen1_pcna %>% separate(AA1, "AA1_algn", "AA1", sep="\\(")
+fen1_splitted <- fen1_pcna %>% separate(AA1, "AA1_algn1", "AA1", sep="\\(")
