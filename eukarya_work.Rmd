@@ -1,0 +1,67 @@
+---
+title: "eukarya_work"
+author: "Subinoy Biswas"
+date: "February 10, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+library(readr)
+fen1_pcna <- read_csv("FEN1_INTER_COEV.csv")
+fen1_pcna
+```
+
+```{r fne1, echo= FALSE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(tidyr)
+
+
+fen1_pcna <- read_csv("FEN1_INTER_COEV.csv")
+fen1_pcna
+fen1_splitted <- fen1_pcna %>% 
+    separate(., AA1, into=c("AA1_algn", "AA1"), sep="\\(", extra="drop")
+
+fen1_splitted <- fen1_splitted %>% 
+    separate(., AA1, into=c("AA1"), sep="\\)", extra="drop")
+
+
+fen1_splitted <- fen1_splitted %>% 
+    separate(., AA2, into=c("AA2_algn", "AA2"), sep="\\(", extra="drop")
+
+fen1_splitted <- fen1_splitted %>% 
+    separate(., AA2, into=c("AA2"), sep="\\)", extra="drop")
+fen1_splitted <- fen1_splitted %>% 
+    mutate(AA1_algn=as.numeric(AA1_algn), AA1=as.numeric(AA1),
+           AA2_algn=as.numeric(AA2_algn), AA2=as.numeric(AA2)
+           )
+fen1_freq <- fen1_splitted %>% 
+    filter(Correlation>=0.8) %>% group_by(AA1) %>% 
+    summarise(freq=n()) %>% mutate(protein="fen1")
+fen1_freq
+
+p <- ggplot(fen1_freq, aes(AA1, y=freq, fill=protein)) + geom_bar(stat="identity")
+p+ labs(fill="Protein")
+```
+
+parameter was added to the code chunk to prevent printing of the R code that generated the plot.
