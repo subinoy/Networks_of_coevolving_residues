@@ -72,7 +72,9 @@ return(data)
 }
 
 ## Pair of residues frequency calculation for each position of PCNA residue.
-## it takes the processed splitted data frame and the protein name whos data is, and after filtering write a filtered dataframe to disk >0.8 correlation as .csv. Finally create a frequency table to use it in next satage.
+## it takes the processed splitted data frame and the protein name whos data is,
+## and after filtering write a filtered dataframe to disk >0.8 correlation as 
+## .csv. Finally create a frequency table to use it in next satage.
 
 
 protein_coevolve_frequency <- function(splitted_df, protein="") {
