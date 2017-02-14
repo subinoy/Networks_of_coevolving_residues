@@ -4,6 +4,7 @@ library(dplyr)
 library(ggplot2)
 library(readr)
 library(tidyr)
+library(VennDiagram)
 
 ## Testing ggplot sequencially
 # p <- ggplot(fen1_freq, aes(AA1, y=freq, fill=protein)) + geom_bar(stat="identity") 
@@ -132,7 +133,7 @@ rfc3_pcna
 ## Applying function to process the data frame
 rfc3 <- data_frame_process(rfc3_pcna)
 ## Generating frequency table
-rf3_co_freq <- protein_coevolve_frequency(rfc3,"RFC3")
+rfc3_co_freq <- protein_coevolve_frequency(rfc3,"RFC3")
 ## Plotting bar plot
 draw_bar_plot(rf3_co_freq)
 ## saving to disk
@@ -206,3 +207,35 @@ p <- p + labs(title="Co-evolving residues of PCNA \"intra\" and with three inter
 p
 
 ggsave("plots/combined_inter_n_PCNA_INTRA_plot.png", width=9, height=6, units= "in", dpi = 300 )
+
+# *******************************
+
+# mylist <- list(Vector1=pcna_co_freq$AA1, Vector2=fen1_co_freq$AA1)
+# venn.diagram(mylist, filename="plots/venn_plot.tiff")
+
+
+venn.plot <- venn.diagram(
+    x = list(
+        PCNA = pcna_co_freq$AA1,
+        Fen1 = fen1_co_freq$AA1,
+        Pold = pold_co_freq$AA1,
+        RFC3 = rfc3_co_freq$AA1
+    ),
+    filename = "plots/Venn_4set_PCNA_pretty.png",
+    col = "transparent",
+    fill = c("cornflowerblue", "green", "yellow", "darkorchid1"),
+    alpha = 0.50,
+    label.col = c("orange", "white", "darkorchid4", "white", 
+                  "white", "white", "white", "white", "darkblue", "white", 
+                  "white", "white", "white", "darkgreen", "white"),
+    cex = 1.5,
+    fontfamily = "serif",
+    fontface = "bold",
+    cat.col = c("darkblue", "darkgreen", "orange", "darkorchid4"),
+    cat.cex = 1.5,
+    cat.pos = 0,
+    cat.dist = 0.07,
+    cat.fontfamily = "serif",
+    rotation.degree = 0,
+    margin = 0.2
+);
