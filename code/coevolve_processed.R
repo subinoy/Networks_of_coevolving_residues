@@ -1,4 +1,4 @@
-setwd("~/suny/RESEARCH_DOC/A_THESIS_WORK/CHAPTER_5_COEVOLV_RESIDUE/eukarya")
+#setwd("~/suny/RESEARCH_DOC/A_THESIS_WORK/CHAPTER_5_COEVOLV_RESIDUE/eukarya")
 
 library(dplyr)
 library(ggplot2)
@@ -85,11 +85,11 @@ draw_bar_plot <- function(frequncy_df){
         geom_bar(stat="identity") 
     p <- p + theme_bw()
     
-    p <- p + labs(title="PCNA inter co-evolving residues >0.8 Correlation",
+    p <- p + labs(title="PCNA inter co-evolving residues ( Correlation >0.8 )",
                   fill="Protein") +
         scale_x_continuous(name="N to C terminal residue position of PCNA",
                            breaks=seq(0,263,15)) +
-        scale_y_continuous(name="Number of coevolving residues pair",
+        scale_y_continuous(name="Pairs of coevolving residues",
                            breaks=seq(0,30,5))
     p
     
@@ -105,8 +105,8 @@ fen1_co_freq <- protein_coevolve_frequency(fen1,"Fen1")
 ## Plotting bar plot
 draw_bar_plot(fen1_co_freq)
 ## saving to disk
-ggsave("fen1/fen1_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
-ggsave("plots/fen1_plot.png", width=9, height=6, units= "in", dpi = 300 )
+ggsave("fen1/fen1_inter_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
+ggsave("plots/fen1_inter_plot.png", width=9, height=6, units= "in", dpi = 300 )
 
 ## POLD
 
@@ -118,6 +118,8 @@ pold <- data_frame_process(pold_pcna)
 pold_co_freq <- protein_coevolve_frequency(pold,"Pold")
 ## Plotting bar plot
 draw_bar_plot(pold_co_freq)
+
+
 ## saving to disk
 ggsave("pold/pold_inter_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
 ggsave("plots/pold_inter_plot.png", width=9, height=6, units= "in", dpi = 300 )
@@ -130,15 +132,77 @@ rfc3_pcna
 ## Applying function to process the data frame
 rfc3 <- data_frame_process(rfc3_pcna)
 ## Generating frequency table
-rf3_co_freq <- protein_coevolve_frequency(rfc3,"RRC3")
+rf3_co_freq <- protein_coevolve_frequency(rfc3,"RFC3")
 ## Plotting bar plot
 draw_bar_plot(rf3_co_freq)
 ## saving to disk
 ggsave("rfc3/rfc3_inter_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
 ggsave("plots/rfc3_inter_plot.png", width=9, height=6, units= "in", dpi = 300 )
 
+## PCNA INTRA ********
+# ***********************************************
+pcna_intra <- read_csv("data/PCNA_INTRA_COEV.csv")
+pcna_intra
+## Applying function to process the data frame
+pcna <- data_frame_process(pcna_intra)
+## Generating frequency table
+pcna_co_freq <- protein_coevolve_frequency(pcna,"PCNA")
+## Plotting bar plot
+draw_bar_plot(pcna_co_freq)
+
+p <- ggplot(pcna_co_freq, aes(AA1, y=freq, fill=protein)) + geom_bar(stat="identity")
+#p <- p + facet_wrap(~protein, ncol=1)
+p <- p + theme_bw()
+
+p <- p + labs(title="PCNA INTRA co-evolving residues ( Correlation >0.8 )",
+              fill="Protein") +
+    scale_x_continuous(name="N to C terminal residue position of PCNA",
+                       breaks=seq(0,263,15)) +
+    scale_y_continuous(name="Pairs of coevolving residues",
+                       breaks=seq(0,30,5))
+p
+
+## saving to disk
+ggsave("pcna/pcna_intra_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
+ggsave("plots/pcna_intra_plot.png", width=9, height=6, units= "in", dpi = 300 )
+
+# *********************************************
+
+# WORKING ON Combined data frame
+
 total_df=bind_rows(fen1_co_freq, pold_co_freq, rf3_co_freq )
 
-
+## facet wrap
 p <- ggplot(total_df, aes(AA1, y=freq, fill=protein)) + geom_bar(stat="identity")
-p + facet_wrap(~protein, ncol=1)
+p <- p + facet_wrap(~protein, ncol=1)
+p <- p + theme_bw()
+
+p <- p + labs(title="PCNA inter co-evolving residues ( Correlation >0.8 )",
+              fill="Protein") +
+    scale_x_continuous(name="N to C terminal residue position of PCNA",
+                       breaks=seq(0,263,15)) +
+    scale_y_continuous(name="Pairs of coevolving residues",
+                       breaks=seq(0,30,5))
+p
+
+ggsave("plots/combined_inter_plot.png", width=9, height=6, units= "in", dpi = 300 )
+
+# ************* PCNA and 3 interacting partners together
+
+PCNA_n_INTER_df=bind_rows(fen1_co_freq, pold_co_freq, rf3_co_freq, pcna_co_freq )
+## Reordering plots
+#temp$size_f = factor(temp$size, levels=c('50%','100%','150%','200%'))
+PCNA_n_INTER_df$protein_f = factor(PCNA_n_INTER_df$protein, levels=c('PCNA','Fen1','Pold','RFC3'))
+p <- ggplot(PCNA_n_INTER_df, aes(AA1, y=freq, fill=protein_f)) + geom_bar(stat="identity")
+p <- p + facet_wrap(~protein_f, ncol=1)
+p <- p + theme_bw()
+
+p <- p + labs(title="Co-evolving residues of PCNA \"intra\" and with three interacting partners  ( Correlation >0.8 )",
+              fill="Protein") +
+    scale_x_continuous(name="N to C terminal residue position of PCNA",
+                       breaks=seq(0,263,15)) +
+    scale_y_continuous(name="Pairs of coevolving residues",
+                       breaks=seq(0,30,10))
+p
+
+ggsave("plots/combined_inter_n_PCNA_INTRA_plot.png", width=9, height=6, units= "in", dpi = 300 )
