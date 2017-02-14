@@ -6,12 +6,12 @@ library(readr)
 library(tidyr)
 
 ## Testing ggplot sequencially
-p <- ggplot(fen1_freq, aes(AA1, y=freq, fill=protein)) + geom_bar(stat="identity") 
-p <- p + theme_bw()
-p <- p + scale_x_continuous(name="N to C terminal residue position of PCNA ",
-                            breaks=seq(0,263,15)) +
-    scale_y_continuous(name="Number of coevolving residues pair", limits=c(0, 30))
-p+ labs(title="PCNA inter co-evolving residues >0.8 Correlation", fill="Protein")
+# p <- ggplot(fen1_freq, aes(AA1, y=freq, fill=protein)) + geom_bar(stat="identity") 
+# p <- p + theme_bw()
+# p <- p + scale_x_continuous(name="N to C terminal residue position of PCNA ",
+#                             breaks=seq(0,263,15)) +
+#     scale_y_continuous(name="Number of coevolving residues pair", limits=c(0, 30))
+# p+ labs(title="PCNA inter co-evolving residues >0.8 Correlation", fill="Protein")
 
 
 ## Function for processing the raw coevolving residue pairs of inter coevolution from CAPS server.
@@ -59,8 +59,9 @@ protein_coevolve_frequency <- function(splitted_df, protein="") {
     filtered_df <- splitted_df %>% 
     filter(Correlation>=0.8) 
     
-    filename=protein
-    write.csv(filtered_df, file=paste0(filename,".csv"), row.names=FALSE)
+    folder="data/"
+    filename=paste0(protein,"_inter.csv")
+    write.csv(filtered_df, paste(folder, filename), row.names=FALSE)
     
     filtered_df_freq <- filtered_df %>% group_by(AA1) %>% 
     summarise(freq=n()) %>% mutate(protein=protein)
@@ -98,6 +99,6 @@ fen1_co_freq <- protein_coevolve_frequency(fen1,"Fen1")
 ## Plotting bar plot
 draw_bar_plot(fen1_co_freq)
 ## saving to disk
-ggsave("fen1_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
+ggsave("plots/fen1_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
 
 
