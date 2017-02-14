@@ -1,32 +1,9 @@
 setwd("~/suny/RESEARCH_DOC/A_THESIS_WORK/CHAPTER_5_COEVOLV_RESIDUE/eukarya")
 
-## system('pandoc  -t latex --standalone --smart --number-sections --template=report.tex -f markdown -o whitepaper.pdf "whitepaper.Rmd"')
-
 library(dplyr)
 library(ggplot2)
 library(readr)
 library(tidyr)
-
-# fen1_splitted <- fen1_pcna %>% 
-#     separate(., AA1, into=c("AA1_algn", "AA1"), sep="\\(", extra="drop")
-# 
-# fen1_splitted <- fen1_splitted %>% 
-#     separate(., AA1, into=c("AA1"), sep="\\)", extra="drop")
-# 
-# 
-# fen1_splitted <- fen1_splitted %>% 
-#     separate(., AA2, into=c("AA2_algn", "AA2"), sep="\\(", extra="drop")
-# 
-# fen1_splitted <- fen1_splitted %>% 
-#     separate(., AA2, into=c("AA2"), sep="\\)", extra="drop")
-# fen1_splitted <- fen1_splitted %>% 
-#     mutate(AA1_algn=as.numeric(AA1_algn), AA1=as.numeric(AA1),
-#            AA2_algn=as.numeric(AA2_algn), AA2=as.numeric(AA2)
-#            )
-# fen1_freq <- fen1_splitted %>% 
-#     filter(Correlation>=0.8) %>% group_by(AA1) %>% 
-#     summarise(freq=n()) %>% mutate(protein="Fen1")
-# fen1_freq
 
 ## Testing ggplot sequencially
 p <- ggplot(fen1_freq, aes(AA1, y=freq, fill=protein)) + geom_bar(stat="identity") 
@@ -36,39 +13,38 @@ p <- p + scale_x_continuous(name="N to C terminal residue position of PCNA ",
     scale_y_continuous(name="Number of coevolving residues pair", limits=c(0, 30))
 p+ labs(title="PCNA inter co-evolving residues >0.8 Correlation", fill="Protein")
 
-#p <- p+ labs(fill="Protein")
-# p + scale_x_continuous(name="PCNA protein N to C terminal", limits=c(1, 263)) +
-#     scale_y_continuous(name="Frequency of coevolving residues pair", limits=c(0, 50))
-##Sys.getenv("PATH")
 
 ## Function for processing the raw coevolving residue pairs of inter coevolution from CAPS server.
 
 data_frame_process <- function(data){
-## Taking the data frame it will split and remove parenthesis and convert the column type to numeric type.
+## Taking the data frame it will split and remove parenthesis and 
+## convert the column type to numeric type.
     
-require(dplyr)
-require(tidyr)
 
-data_splitted <- data %>% 
-    separate(., AA1, into=c("AA1_algn", "AA1"), sep="\\(", extra="drop")
+    require(dplyr)
+    require(tidyr)
 
-data_splitted <- data_splitted %>% 
-    separate(., AA1, into=c("AA1"), sep="\\)", extra="drop")
+    data_splitted <- data %>% 
+        separate(., AA1, into=c("AA1_algn", "AA1"), sep="\\(", extra="drop")
+
+    data_splitted <- data_splitted %>% 
+        separate(., AA1, into=c("AA1"), sep="\\)", extra="drop")
 
 
-data_splitted <- data_splitted %>% 
-    separate(., AA2, into=c("AA2_algn", "AA2"), sep="\\(", extra="drop")
+    data_splitted <- data_splitted %>% 
+        separate(., AA2, into=c("AA2_algn", "AA2"), sep="\\(", extra="drop")
 
-data_splitted <- data_splitted %>% 
-    separate(., AA2, into=c("AA2"), sep="\\)", extra="drop")
+    data_splitted <- data_splitted %>% 
+        separate(., AA2, into=c("AA2"), sep="\\)", extra="drop")
 
-# Charater to numeric type conversion
-data_splitted <- data_splitted %>% 
+    # Charater to numeric type conversion
+    data_splitted <- data_splitted %>% 
     mutate(AA1_algn=as.numeric(AA1_algn), AA1=as.numeric(AA1),
            AA2_algn=as.numeric(AA2_algn), AA2=as.numeric(AA2)
-    )
-data <- data_splitted
-return(data)
+            )
+
+    data <- data_splitted
+    return(data)
 }
 
 ## Pair of residues frequency calculation for each position of PCNA residue.
@@ -95,6 +71,7 @@ protein_coevolve_frequency <- function(splitted_df, protein="") {
 
 ## Barplot plotting function with ggplot
 
+
 draw_bar_plot <- function(frequncy_df){
     require(ggplot2)
     p <- ggplot(frequncy_df, aes(AA1, y=freq, fill=protein)) + 
@@ -108,7 +85,6 @@ draw_bar_plot <- function(frequncy_df){
         scale_y_continuous(name="Number of coevolving residues pair",
                            limits=c(0, 30))
     p
-    
     
 }
 
