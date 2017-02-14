@@ -59,9 +59,15 @@ protein_coevolve_frequency <- function(splitted_df, protein="") {
     filtered_df <- splitted_df %>% 
     filter(Correlation>=0.8) 
     
+    ## writing filtered coevolved residue pairs to a csv file
     folder="data/"
     filename=paste0(protein,"_inter.csv")
     write.csv(filtered_df, paste(folder, filename), row.names=FALSE)
+    
+    ## writing filtered coevolved network residue pairs to a csv file
+    network_file=paste0(protein, "_inter_network.csv")
+    filtered_df %>% select(AA1, AA2, Correlation) %>% 
+        write.csv(., paste(folder, network_file), row.names=FALSE)
     
     filtered_df_freq <- filtered_df %>% group_by(AA1) %>% 
     summarise(freq=n()) %>% mutate(protein=protein)
@@ -84,13 +90,13 @@ draw_bar_plot <- function(frequncy_df){
         scale_x_continuous(name="N to C terminal residue position of PCNA",
                            breaks=seq(0,263,15)) +
         scale_y_continuous(name="Number of coevolving residues pair",
-                           limits=c(0, 30))
+                           breaks=seq(0,30,5))
     p
     
 }
 
 ## FEN1 
-fen1_pcna <- read_csv("FEN1_INTER_COEV.csv")
+fen1_pcna <- read_csv("data/FEN1_INTER_COEV.csv")
 fen1_pcna
 ## Applying function to process the data frame
 fen1 <- data_frame_process(fen1_pcna)
@@ -99,6 +105,40 @@ fen1_co_freq <- protein_coevolve_frequency(fen1,"Fen1")
 ## Plotting bar plot
 draw_bar_plot(fen1_co_freq)
 ## saving to disk
-ggsave("plots/fen1_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
+ggsave("fen1/fen1_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
+ggsave("plots/fen1_plot.png", width=9, height=6, units= "in", dpi = 300 )
+
+## POLD
+
+pold_pcna <- read_csv("data/POLD_INTER_COEV.csv")
+pold_pcna
+## Applying function to process the data frame
+pold <- data_frame_process(pold_pcna)
+## Generating frequency table
+pold_co_freq <- protein_coevolve_frequency(pold,"Pold")
+## Plotting bar plot
+draw_bar_plot(pold_co_freq)
+## saving to disk
+ggsave("pold/pold_inter_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
+ggsave("plots/pold_inter_plot.png", width=9, height=6, units= "in", dpi = 300 )
 
 
+## RFC3
+
+rfc3_pcna <- read_csv("data/RFC3_INTER_COEV.csv")
+rfc3_pcna
+## Applying function to process the data frame
+rfc3 <- data_frame_process(rfc3_pcna)
+## Generating frequency table
+rf3_co_freq <- protein_coevolve_frequency(rfc3,"RRC3")
+## Plotting bar plot
+draw_bar_plot(rf3_co_freq)
+## saving to disk
+ggsave("rfc3/rfc3_inter_plot.tiff", width=9, height=6, units= "in", dpi = 300 )
+ggsave("plots/rfc3_inter_plot.png", width=9, height=6, units= "in", dpi = 300 )
+
+total_df=bind_rows(fen1_co_freq, pold_co_freq, rf3_co_freq )
+
+
+p <- ggplot(total_df, aes(AA1, y=freq, fill=protein)) + geom_bar(stat="identity")
+p + facet_wrap(~protein, ncol=1)
