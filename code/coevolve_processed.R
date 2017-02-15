@@ -263,4 +263,6 @@ pcna_pold_inner <- inner_join(pcna_df, pold_df, by="AA1")
 pcna_pold_inner
 pold_fen1_inner <- inner_join(pold_df, fen1_df, by="AA1")
 pold_fen1_inner
-rfc3_df <- 
+rfc3_df <- creating_inner_df(rfc3_co_freq)
+pold_rfc3_inner <- inner_join(pold_df, rfc3_df, by="AA1")
+pold_rfc3_inner
