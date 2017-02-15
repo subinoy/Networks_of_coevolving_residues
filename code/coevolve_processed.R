@@ -239,3 +239,28 @@ venn.plot <- venn.diagram(
     rotation.degree = 0,
     margin = 0.2
 );
+
+# **************
+## fucntion for creating inner join data frame
+creating_inner_df <- function(co_freq_df){
+    inner_df <- as.data.frame(co_freq_df$AA1)
+    names(inner_df) <- "AA1"
+    return(inner_df)
+}
+
+fen1_df <- as.data.frame(fen1_co_freq$AA1)
+names(fen1_df) <- "AA1"
+fen1_df
+
+pcna_df <- as.data.frame(pcna_co_freq$AA1)
+names(pcna_df) <- "AA1"
+pcna_df
+pcna_fen1_inner <- inner_join(pcna_df, fen1_df, by="AA1")
+
+pold_df <- creating_inner_df(pold_co_freq)
+
+pcna_pold_inner <- inner_join(pcna_df, pold_df, by="AA1")
+pcna_pold_inner
+pold_fen1_inner <- inner_join(pold_df, fen1_df, by="AA1")
+pold_fen1_inner
+rfc3_df <- 
