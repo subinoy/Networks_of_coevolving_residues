@@ -1,2 +1,2 @@
 
-<img src="plots/network_redues.gif"/>
+<img src="/plots/networks_residues.gif"/>
